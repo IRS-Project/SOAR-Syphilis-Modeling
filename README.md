@@ -95,10 +95,11 @@ should get an output like the following:
     Days (duration)     : 730 (of 730)
     Number of viruses   : 1
     Last run elapsed t  : 0.00s
-    Total elapsed t     : 2.00s (101 runs)
-    Last run speed      : 1196.64 million agents x day / second
-    Average run speed   : 3511.72 million agents x day / second
+    Total elapsed t     : 1.00s (101 runs)
+    Last run speed      : 1336.31 million agents x day / second
+    Average run speed   : 3695.95 million agents x day / second
     Rewiring            : off
+    Last seed used      : 526637567
 
     Global events:
      (none)

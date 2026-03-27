@@ -208,3 +208,6 @@ __marimo__/
 
 # Others
 *.o
+
+# VS Code is set up via devcontainer
+.vscode/
