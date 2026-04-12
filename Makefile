@@ -17,7 +17,7 @@ endif
 
 .PHONY: all clean
 
-all: main
+all: main.o
 
 main.o: main.cpp epiworld.hpp
 >$(CXX) $(CXXFLAGS) main.cpp -o main.o

@@ -1,0 +1,7 @@
+main.o
+main.o.dSYM
+results/
+README_files/
+*.md
+*.qmd
+.git
