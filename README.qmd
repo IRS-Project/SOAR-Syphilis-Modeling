@@ -1,0 +1,80 @@
+---
+format: gfm
+engine: knitr
+---
+
+# SOAR Syphilis Modeling
+
+SOAR collaborative research project for modeling syphilis transmission using R and Python.
+
+## Implementation
+
+The implementation lives in the [`syphilis.hpp`](./syphilis.hpp) and [`main.cpp`](./main.cpp) files. We are using the `epiworld` C++ library ([link](https://github.com/UofUEpiBio/epiworld)) for the core simulation engine.
+
+The model implements a simple Syphilis model with the following flow
+
+```{mermaid}
+%%| label: syphilis-model
+flowchart LR
+    S[Susceptible] --> E[Exposed]
+    E --> I_p[I. Primary]
+    I_p --> I_s[I. Secondary]
+    I_s --> I_l[I. Latent]
+    I_l --> R[Recovered]
+```
+
+This model excludes the tertiary stage of syphilis, as it is not infectious and does not contribute to transmission dynamics (also, it typically happens decades after the initial infection).
+
+Although `epiworld` allows users using composition for implementing models, the approach we are using here relies on inheritance, which, to our opinion, is the best way to build models as we can then reuse them and share them easily. The `ModelSyphilis` class inherits from the `epiworld::Model` class, and we implement the necessary methods to define the model's behavior.
+
+## Using the model
+
+The implemented model has an example configuration in the `main.cpp` file:
+
+```{r}
+#| label: printing-model
+#| echo: false
+#| results: 'asis'
+#| warning: false
+#| message: false
+cat("```cpp\n")
+readLines("main.cpp") |>
+  cat(sep = "\n")
+cat("```")
+```
+To execute the model, you can run `make main.o` and then `./main.o`. You should get an output like the following:
+
+```{bash}
+#| label: run-model
+./main.o
+```
+
+## Saved results
+
+The current implementation contains saves the total history when calling `ModelSyphilis::run_multiple()`. Here is a minor example using the data
+
+```{r}
+#| label: using-data
+library(data.table)
+dat <- list.files("results", full.names = TRUE, pattern = "\\.csv$") |>
+  lapply(\(fn) {fread(fn)[, id := fn]}) |>
+  rbindlist()
+
+# Figuring out the outbreak size
+final_size <- dat[
+  date == max(date) & state != "Susceptible",
+  .(final_size = sum(counts)),
+  by = "id"
+  ][, final_size]
+
+# Plotting
+hist(
+  final_size,
+  main = "Syphilis outbreak size distribution",
+  xlab = "Final outbreak size",
+  ylab = "Frequency",
+  sub = sprintf("Data from %d simulations", length(unique(dat$id)))
+  )
+```
+
+
